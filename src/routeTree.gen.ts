@@ -11,6 +11,10 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DjsRouteImport } from './routes/djs'
+import { Route as FaqRouteImport } from './routes/faq'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as SafetyRouteImport } from './routes/safety'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as CompanionsIndexRouteImport } from './routes/companions.index'
 
 const IndexRoute = IndexRouteImport.update({
@@ -23,6 +27,26 @@ const DjsRoute = DjsRouteImport.update({
   path: '/djs',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SafetyRoute = SafetyRouteImport.update({
+  id: '/safety',
+  path: '/safety',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CompanionsIndexRoute = CompanionsIndexRouteImport.update({
   id: '/companions/',
   path: '/companions/',
@@ -32,30 +56,55 @@ const CompanionsIndexRoute = CompanionsIndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/djs': typeof DjsRoute
+  '/faq': typeof FaqRoute
+  '/privacy': typeof PrivacyRoute
+  '/safety': typeof SafetyRoute
+  '/terms': typeof TermsRoute
   '/companions/': typeof CompanionsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/djs': typeof DjsRoute
+  '/faq': typeof FaqRoute
+  '/privacy': typeof PrivacyRoute
+  '/safety': typeof SafetyRoute
+  '/terms': typeof TermsRoute
   '/companions': typeof CompanionsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/djs': typeof DjsRoute
+  '/faq': typeof FaqRoute
+  '/privacy': typeof PrivacyRoute
+  '/safety': typeof SafetyRoute
+  '/terms': typeof TermsRoute
   '/companions/': typeof CompanionsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/djs' | '/companions/'
+  fullPaths:
+    '/' | '/djs' | '/faq' | '/privacy' | '/safety' | '/terms' | '/companions/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/djs' | '/companions'
-  id: '__root__' | '/' | '/djs' | '/companions/'
+  to: '/' | '/djs' | '/faq' | '/privacy' | '/safety' | '/terms' | '/companions'
+  id:
+    | '__root__'
+    | '/'
+    | '/djs'
+    | '/faq'
+    | '/privacy'
+    | '/safety'
+    | '/terms'
+    | '/companions/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DjsRoute: typeof DjsRoute
+  FaqRoute: typeof FaqRoute
+  PrivacyRoute: typeof PrivacyRoute
+  SafetyRoute: typeof SafetyRoute
+  TermsRoute: typeof TermsRoute
   CompanionsIndexRoute: typeof CompanionsIndexRoute
 }
 
@@ -75,6 +124,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DjsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/safety': {
+      id: '/safety'
+      path: '/safety'
+      fullPath: '/safety'
+      preLoaderRoute: typeof SafetyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/companions/': {
       id: '/companions/'
       path: '/companions'
@@ -88,6 +165,10 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DjsRoute: DjsRoute,
+  FaqRoute: FaqRoute,
+  PrivacyRoute: PrivacyRoute,
+  SafetyRoute: SafetyRoute,
+  TermsRoute: TermsRoute,
   CompanionsIndexRoute: CompanionsIndexRoute,
 }
 export const routeTree = rootRouteImport
