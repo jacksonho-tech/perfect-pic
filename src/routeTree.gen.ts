@@ -10,33 +10,53 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DjsRouteImport } from './routes/djs'
+import { Route as CompanionsIndexRouteImport } from './routes/companions.index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DjsRoute = DjsRouteImport.update({
+  id: '/djs',
+  path: '/djs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CompanionsIndexRoute = CompanionsIndexRouteImport.update({
+  id: '/companions/',
+  path: '/companions/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/djs': typeof DjsRoute
+  '/companions/': typeof CompanionsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/djs': typeof DjsRoute
+  '/companions': typeof CompanionsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/djs': typeof DjsRoute
+  '/companions/': typeof CompanionsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/djs' | '/companions/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/djs' | '/companions'
+  id: '__root__' | '/' | '/djs' | '/companions/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DjsRoute: typeof DjsRoute
+  CompanionsIndexRoute: typeof CompanionsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +68,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/djs': {
+      id: '/djs'
+      path: '/djs'
+      fullPath: '/djs'
+      preLoaderRoute: typeof DjsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/companions/': {
+      id: '/companions/'
+      path: '/companions'
+      fullPath: '/companions/'
+      preLoaderRoute: typeof CompanionsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DjsRoute: DjsRoute,
+  CompanionsIndexRoute: CompanionsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
