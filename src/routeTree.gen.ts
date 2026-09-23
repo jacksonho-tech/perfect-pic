@@ -10,16 +10,24 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DjsRouteImport } from './routes/djs'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SafetyRouteImport } from './routes/safety'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as CompanionsIndexRouteImport } from './routes/companions.index'
+import { Route as CompanionsIdRouteImport } from './routes/companions.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DjsRoute = DjsRouteImport.update({
@@ -37,6 +45,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SafetyRoute = SafetyRouteImport.update({
   id: '/safety',
   path: '/safety',
@@ -52,59 +65,98 @@ const CompanionsIndexRoute = CompanionsIndexRouteImport.update({
   path: '/companions/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CompanionsIdRoute = CompanionsIdRouteImport.update({
+  id: '/companions/$id',
+  path: '/companions/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/djs': typeof DjsRoute
   '/faq': typeof FaqRoute
   '/privacy': typeof PrivacyRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/safety': typeof SafetyRoute
   '/terms': typeof TermsRoute
+  '/companions/$id': typeof CompanionsIdRoute
   '/companions/': typeof CompanionsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/djs': typeof DjsRoute
   '/faq': typeof FaqRoute
   '/privacy': typeof PrivacyRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/safety': typeof SafetyRoute
   '/terms': typeof TermsRoute
+  '/companions/$id': typeof CompanionsIdRoute
   '/companions': typeof CompanionsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/djs': typeof DjsRoute
   '/faq': typeof FaqRoute
   '/privacy': typeof PrivacyRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/safety': typeof SafetyRoute
   '/terms': typeof TermsRoute
+  '/companions/$id': typeof CompanionsIdRoute
   '/companions/': typeof CompanionsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/djs' | '/faq' | '/privacy' | '/safety' | '/terms' | '/companions/'
-  fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/djs' | '/faq' | '/privacy' | '/safety' | '/terms' | '/companions'
-  id:
-    | '__root__'
     | '/'
+    | '/auth'
     | '/djs'
     | '/faq'
     | '/privacy'
+    | '/reset-password'
     | '/safety'
     | '/terms'
+    | '/companions/$id'
+    | '/companions/'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/'
+    | '/auth'
+    | '/djs'
+    | '/faq'
+    | '/privacy'
+    | '/reset-password'
+    | '/safety'
+    | '/terms'
+    | '/companions/$id'
+    | '/companions'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/djs'
+    | '/faq'
+    | '/privacy'
+    | '/reset-password'
+    | '/safety'
+    | '/terms'
+    | '/companions/$id'
     | '/companions/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRoute
   DjsRoute: typeof DjsRoute
   FaqRoute: typeof FaqRoute
   PrivacyRoute: typeof PrivacyRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SafetyRoute: typeof SafetyRoute
   TermsRoute: typeof TermsRoute
+  CompanionsIdRoute: typeof CompanionsIdRoute
   CompanionsIndexRoute: typeof CompanionsIndexRoute
 }
 
@@ -115,6 +167,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/djs': {
@@ -138,6 +197,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/safety': {
       id: '/safety'
       path: '/safety'
@@ -159,16 +225,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CompanionsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/companions/$id': {
+      id: '/companions/$id'
+      path: '/companions/$id'
+      fullPath: '/companions/$id'
+      preLoaderRoute: typeof CompanionsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthRoute: AuthRoute,
   DjsRoute: DjsRoute,
   FaqRoute: FaqRoute,
   PrivacyRoute: PrivacyRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SafetyRoute: SafetyRoute,
   TermsRoute: TermsRoute,
+  CompanionsIdRoute: CompanionsIdRoute,
   CompanionsIndexRoute: CompanionsIndexRoute,
 }
 export const routeTree = rootRouteImport
