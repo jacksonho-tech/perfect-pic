@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as BookingsRouteImport } from './routes/bookings'
 import { Route as CartRouteImport } from './routes/cart'
@@ -23,10 +24,16 @@ import { Route as SafetyRouteImport } from './routes/safety'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as CompanionsIndexRouteImport } from './routes/companions.index'
 import { Route as CompanionsIdRouteImport } from './routes/companions.$id'
+import { Route as ApiPublicGenerateBioRouteImport } from './routes/api/public/generate-bio'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -94,9 +101,15 @@ const CompanionsIdRoute = CompanionsIdRouteImport.update({
   path: '/companions/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicGenerateBioRoute = ApiPublicGenerateBioRouteImport.update({
+  id: '/api/public/generate-bio',
+  path: '/api/public/generate-bio',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/bookings': typeof BookingsRoute
   '/cart': typeof CartRoute
@@ -110,9 +123,11 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/companions/$id': typeof CompanionsIdRoute
   '/companions/': typeof CompanionsIndexRoute
+  '/api/public/generate-bio': typeof ApiPublicGenerateBioRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/bookings': typeof BookingsRoute
   '/cart': typeof CartRoute
@@ -126,10 +141,12 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/companions/$id': typeof CompanionsIdRoute
   '/companions': typeof CompanionsIndexRoute
+  '/api/public/generate-bio': typeof ApiPublicGenerateBioRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/bookings': typeof BookingsRoute
   '/cart': typeof CartRoute
@@ -143,11 +160,13 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/companions/$id': typeof CompanionsIdRoute
   '/companions/': typeof CompanionsIndexRoute
+  '/api/public/generate-bio': typeof ApiPublicGenerateBioRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/auth'
     | '/bookings'
     | '/cart'
@@ -161,9 +180,11 @@ export interface FileRouteTypes {
     | '/terms'
     | '/companions/$id'
     | '/companions/'
+    | '/api/public/generate-bio'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin'
     | '/auth'
     | '/bookings'
     | '/cart'
@@ -177,9 +198,11 @@ export interface FileRouteTypes {
     | '/terms'
     | '/companions/$id'
     | '/companions'
+    | '/api/public/generate-bio'
   id:
     | '__root__'
     | '/'
+    | '/admin'
     | '/auth'
     | '/bookings'
     | '/cart'
@@ -193,10 +216,12 @@ export interface FileRouteTypes {
     | '/terms'
     | '/companions/$id'
     | '/companions/'
+    | '/api/public/generate-bio'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
   AuthRoute: typeof AuthRoute
   BookingsRoute: typeof BookingsRoute
   CartRoute: typeof CartRoute
@@ -210,6 +235,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   CompanionsIdRoute: typeof CompanionsIdRoute
   CompanionsIndexRoute: typeof CompanionsIndexRoute
+  ApiPublicGenerateBioRoute: typeof ApiPublicGenerateBioRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -219,6 +245,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -312,11 +345,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CompanionsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/generate-bio': {
+      id: '/api/public/generate-bio'
+      path: '/api/public/generate-bio'
+      fullPath: '/api/public/generate-bio'
+      preLoaderRoute: typeof ApiPublicGenerateBioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
   AuthRoute: AuthRoute,
   BookingsRoute: BookingsRoute,
   CartRoute: CartRoute,
@@ -330,6 +371,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   CompanionsIdRoute: CompanionsIdRoute,
   CompanionsIndexRoute: CompanionsIndexRoute,
+  ApiPublicGenerateBioRoute: ApiPublicGenerateBioRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
