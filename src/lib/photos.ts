@@ -50,5 +50,5 @@ export function useCompanionPhotos(
 
 export function usePhotoOrFallback(companionId: string | undefined, displayName: string) {
   const { data } = useCompanionPhotos(companionId, displayName);
-  return data && data.length ? data[0].signedUrl : fallbackPhoto(displayName);
+  return data?.[0]?.signedUrl || fallbackPhoto(displayName);
 }

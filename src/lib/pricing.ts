@@ -49,7 +49,7 @@ export function depositFor(total: number, percent: number) {
 
 /** Sessions start at 10 PM and must end by 5 AM. */
 export function endsTooLate(startTime: string, hours: number) {
-  const [h, m] = startTime.split(":").map(Number);
+  const [h = 0, m = 0] = startTime.split(":").map(Number);
   const startMinutes = h * 60 + m;
   const normalised = startMinutes < 5 * 60 ? startMinutes + 24 * 60 : startMinutes;
   return normalised + hours * 60 > 29 * 60;

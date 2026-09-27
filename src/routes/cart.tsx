@@ -43,7 +43,7 @@ function CartPage() {
   const [equipment, setEquipment] = useState("");
   const [notes, setNotes] = useState("");
 
-  const depositPercent = Number(settings?.deposit_percent ?? 30);
+  const depositPercent = Number(settings?.["deposit_percent"] ?? 30);
   const rows = items ?? [];
   const total = rows.reduce((sum, r) => sum + (priceForCartRow(r)?.total ?? 0), 0);
   const deposit = depositFor(total, depositPercent);
@@ -241,7 +241,7 @@ function CartPage() {
           </div>
           <p className="text-xs text-muted-foreground">
             Nothing is charged until a companion accepts. The balance is settled at the event. Free
-            cancellation up to {settings?.cancellation_hours ?? 48} hours before.
+            cancellation up to {settings?.["cancellation_hours"] ?? 48} hours before.
           </p>
 
           {!idApproved && (
@@ -300,7 +300,7 @@ function Empty({
 }: {
   title: string;
   body: string;
-  cta: { to: string; label: string };
+  cta: { to: "/auth" | "/companions"; label: string };
 }) {
   return (
     <div className="mx-auto max-w-lg px-4 py-24 text-center">
