@@ -45,7 +45,8 @@ export const Route = createFileRoute("/api/public/generate-bio")({
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            model: "google/gemini-3.8-flash",
+            model: "openai/gpt-6-astra",
+            reasoning_effort: "low",
             messages: [{ role: "user", content: prompt }],
           }),
         });
