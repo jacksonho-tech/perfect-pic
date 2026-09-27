@@ -104,7 +104,7 @@ function ProfilePage() {
   }
 
   const status = profile?.id_verification_status ?? "none";
-  const copy = STATUS_COPY[status];
+  const copy = STATUS_COPY[status] ?? STATUS_COPY["none"]!;
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-10">

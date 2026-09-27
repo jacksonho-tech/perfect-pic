@@ -111,7 +111,7 @@ function BookingsPage() {
   }
 
   const rows = bookings ?? [];
-  const cancellationHours = Number(settings?.cancellation_hours ?? 48);
+  const cancellationHours = Number(settings?.["cancellation_hours"] ?? 48);
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10">

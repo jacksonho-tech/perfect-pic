@@ -76,7 +76,7 @@ export function Header() {
                     <Link to="/bookings">My bookings</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link to="/account">Profile & ID</Link>
+                    <Link to="/profile">Profile & ID</Link>
                   </DropdownMenuItem>
                   {isCompanion && (
                     <DropdownMenuItem asChild>

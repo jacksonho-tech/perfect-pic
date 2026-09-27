@@ -54,10 +54,10 @@ function Home() {
           <div className="mx-auto w-full max-w-6xl px-4 pb-14">
             <p className="mb-3 text-sm uppercase tracking-[0.3em] text-primary">Hong Kong</p>
             <h1 className="max-w-2xl font-display text-4xl font-extrabold leading-tight md:text-6xl">
-              {settings?.home_headline ?? "Great company for a great night out."}
+              {settings?.["home_headline"] ?? "Great company for a great night out."}
             </h1>
             <p className="mt-4 max-w-xl text-base text-muted-foreground md:text-lg">
-              {settings?.home_subline ??
+              {settings?.["home_subline"] ??
                 "A small, curated circle of social companions and DJs. Platonic company, public venues, always classy."}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">

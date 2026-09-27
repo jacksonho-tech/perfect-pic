@@ -1,11 +1,18 @@
-# Hype — build roadmap
+# HYPE — roadmap
 
-- [x] Database schema, roles (has_role), RLS, storage buckets
-- [x] Dark nightlife design system
-- [ ] Public pages: home, companions list, profile, terms/privacy/safety/faq
-- [ ] Auth: customer + companion tabs, 18+ consent, ID upload & approval
-- [ ] Cart with night sessions, add-ons, DJ hourly booking
-- [ ] Booking flow: request -> accept/decline -> deposit -> completed
-- [ ] Customer, companion and admin dashboards, CMS, reviews, reports, blocks
-- [ ] AI description generator
-- [ ] Deferred (needs user action): Stripe deposit payments, transactional emails
+## Done
+- Database schema, roles (user_roles + has_role), RLS, seed companions/pricing/settings
+- Private storage buckets (ID documents, companion photos via signed URLs)
+- Design system, header/footer, age gate
+- Home, companions list + filters, DJ page, terms/privacy/safety/FAQ
+- Companion profile + booking panel (packages, add-ons, Party Mode, DJ hourly, 5 AM limit)
+- Auth (customer / companion tabs, 18+ terms checkbox, password reset)
+- Profile & ID upload, cart + booking request, my bookings (cancel, review)
+- Companion dashboard (requests, profile, photos, availability, AI bio draft)
+- Owner dashboard (bookings, ID queue, companions + pricing, photo queue, review queue, reports, site settings)
+
+## Open (needs user action)
+- Stripe deposit checkout + webhook (needs Stripe setup / legal + restricted-business check)
+- Transactional emails (request received/accepted/declined, reminders, review requests)
+- 24h auto-expiry of pending requests (scheduled job)
+- Overlap check so a companion can't be double-booked on the same night

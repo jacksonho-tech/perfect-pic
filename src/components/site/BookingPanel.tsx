@@ -48,7 +48,7 @@ export function BookingPanel({ companion }: { companion: Companion }) {
     hours,
     travelFee: isHourly ? Number(companion.travel_fee) : 0,
   });
-  const depositPercent = Number(settings?.deposit_percent ?? 30);
+  const depositPercent = Number(settings?.["deposit_percent"] ?? 30);
   const deposit = depositFor(price.total, depositPercent);
   const tooLate = endsTooLate(startTime, price.hours);
 

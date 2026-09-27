@@ -14,7 +14,7 @@ export function formatTime(t: string | null | undefined) {
 }
 
 export function endTime(start: string, hours: number) {
-  const [h, m] = start.split(":").map(Number);
+  const [h = 0, m = 0] = start.split(":").map(Number);
   const total = (h * 60 + m + hours * 60) % (24 * 60);
   const hh = Math.floor(total / 60);
   const mm = total % 60;

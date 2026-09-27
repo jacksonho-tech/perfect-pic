@@ -198,7 +198,10 @@ function IdQueue() {
   });
 
   async function view(path: string | null) {
-    if (!path) return toast.error("No document uploaded");
+    if (!path) {
+      toast.error("No document uploaded");
+      return;
+    }
     const { data } = await supabase.storage.from("id-documents").createSignedUrl(path, 300);
     if (data?.signedUrl) window.open(data.signedUrl, "_blank", "noopener");
     else toast.error("Could not open the document");
@@ -253,7 +256,13 @@ function Companions() {
   });
 
   const update = useMutation({
-    mutationFn: async ({ id, patch }: { id: string; patch: Record<string, unknown> }) => {
+    mutationFn: async ({
+      id,
+      patch,
+    }: {
+      id: string;
+      patch: { status?: "approved"; is_active?: boolean; is_verified?: boolean };
+    }) => {
       const { error } = await supabase.from("companions").update(patch).eq("id", id);
       if (error) throw error;
     },
@@ -265,7 +274,18 @@ function Companions() {
   });
 
   const price = useMutation({
-    mutationFn: async ({ id, patch }: { id: string; patch: Record<string, unknown> }) => {
+    mutationFn: async ({
+      id,
+      patch,
+    }: {
+      id: string;
+      patch: {
+        price_per_hour?: number;
+        base_price?: number;
+        extra_hour_price?: number;
+        min_hours?: number;
+      };
+    }) => {
       const { error } = await supabase.from("companion_services").update(patch).eq("id", id);
       if (error) throw error;
     },
