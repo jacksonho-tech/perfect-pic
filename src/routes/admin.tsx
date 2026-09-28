@@ -12,7 +12,218 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { useRoles, useSession } from "@/lib/auth";
 import { hkd, formatTime } from "@/lib/money";
-import { SERVICE_LABELS } from "@/lib/types";
+import { SERVICE_LABELS, type ServiceType } from "@/lib/types";
+import { useServerFn } from "@tanstack/react-start";
+import { linkCompanionToUser, listCompanionAccounts } from "@/lib/admin.functions";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
+const splitList = (s: string) =>
+  s
+    .split(",")
+    .map((x) => x.trim())
+    .filter(Boolean)
+    .slice(0, 20);
+
+function LinkAccount({ companionId, linked }: { companionId: string; linked: boolean }) {
+  const queryClient = useQueryClient();
+  const [email, setEmail] = useState("");
+  const link = useServerFn(linkCompanionToUser);
+  const m = useMutation({
+    mutationFn: (value: string | null) => link({ data: { companionId, email: value } }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-companions"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-companion-accounts"] });
+      setEmail("");
+      toast.success("Account link updated");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <Input
+        className="h-9 max-w-xs"
+        list="companion-accounts"
+        placeholder="Paste or pick an account email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
+      <Button
+        size="sm"
+        variant="secondary"
+        disabled={!email.trim() || m.isPending}
+        onClick={() => m.mutate(email.trim())}
+      >
+        Link account
+      </Button>
+      {linked && (
+        <Button size="sm" variant="ghost" disabled={m.isPending} onClick={() => m.mutate(null)}>
+          Unlink
+        </Button>
+      )}
+    </div>
+  );
+}
+
+const EMPTY_FORM = {
+  display_name: "",
+  tagline: "",
+  bio: "",
+  age_range: "",
+  languages: "",
+  tags: "",
+  genres: "",
+  mix_links: "",
+  equipment_provides: "",
+  equipment_needs: "",
+  areas: "",
+  service_type: "drinking" as ServiceType,
+  price: "",
+};
+
+function AddCompanion() {
+  const queryClient = useQueryClient();
+  const [open, setOpen] = useState(false);
+  const [f, setF] = useState(EMPTY_FORM);
+  const set = (k: keyof typeof EMPTY_FORM) => (e: { target: { value: string } }) =>
+    setF({ ...f, [k]: e.target.value });
+  const isDj = f.service_type === "dj";
+
+  const save = useMutation({
+    mutationFn: async () => {
+      const name = f.display_name.trim();
+      const price = Number(f.price);
+      if (!name) throw new Error("Display name is required");
+      if (!(price > 0)) throw new Error("Enter a starting price");
+      const { data: row, error } = await supabase
+        .from("companions")
+        .insert({
+          display_name: name.slice(0, 80),
+          tagline: f.tagline.trim().slice(0, 160) || null,
+          bio: f.bio.trim().slice(0, 3000) || null,
+          age_range: f.age_range.trim() || null,
+          languages: splitList(f.languages),
+          tags: isDj ? [] : splitList(f.tags),
+          genres: isDj ? splitList(f.genres) : [],
+          mix_links: isDj ? splitList(f.mix_links) : [],
+          equipment_provides: isDj ? f.equipment_provides.trim() || null : null,
+          equipment_needs: isDj ? f.equipment_needs.trim() || null : null,
+          areas: f.areas.trim() || null,
+        })
+        .select("id")
+        .single();
+      if (error) throw error;
+      const { error: sErr } = await supabase.from("companion_services").insert(
+        isDj
+          ? {
+              companion_id: row.id,
+              service_type: "dj",
+              billing_type: "hourly",
+              price_per_hour: price,
+              min_hours: 3,
+              base_hours: 3,
+              extra_hour_price: price,
+            }
+          : {
+              companion_id: row.id,
+              service_type: f.service_type,
+              billing_type: "package",
+              base_price: price,
+              base_hours: 4,
+              min_hours: 4,
+              extra_hour_price: 500,
+            },
+      );
+      if (sErr) throw sErr;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-companions"] });
+      toast.success("Companion added — approve and publish when ready");
+      setF(EMPTY_FORM);
+      setOpen(false);
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button>Add companion</Button>
+      </DialogTrigger>
+      <DialogContent className="max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Add companion</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-3">
+          <div>
+            <Label className="text-xs">Service type</Label>
+            <select
+              className="mt-1 h-9 w-full rounded-md border border-input bg-background px-2 text-sm"
+              value={f.service_type}
+              onChange={set("service_type")}
+            >
+              <option value="drinking">Drinking companion</option>
+              <option value="party">Party companion</option>
+              <option value="dj">DJ</option>
+            </select>
+          </div>
+          <Field label="Display name" value={f.display_name} onChange={set("display_name")} />
+          <Field label="Tagline" value={f.tagline} onChange={set("tagline")} />
+          <div>
+            <Label className="text-xs">Bio</Label>
+            <Textarea className="mt-1" rows={4} value={f.bio} onChange={set("bio")} />
+          </div>
+          <Field label="Age range (e.g. 25–30)" value={f.age_range} onChange={set("age_range")} />
+          <Field label="Languages (comma separated)" value={f.languages} onChange={set("languages")} />
+          {isDj ? (
+            <>
+              <Field label="Genres (comma separated)" value={f.genres} onChange={set("genres")} />
+              <Field label="Mix links (comma separated)" value={f.mix_links} onChange={set("mix_links")} />
+              <Field label="Equipment provided" value={f.equipment_provides} onChange={set("equipment_provides")} />
+              <Field label="Equipment needed from venue" value={f.equipment_needs} onChange={set("equipment_needs")} />
+            </>
+          ) : (
+            <Field label="Tags (comma separated)" value={f.tags} onChange={set("tags")} />
+          )}
+          <Field label="Areas" value={f.areas} onChange={set("areas")} />
+          <Field
+            label={isDj ? "Price per hour (HKD, 3h minimum)" : "4-hour session price (HKD)"}
+            value={f.price}
+            onChange={set("price")}
+            type="number"
+          />
+          <Button className="w-full" disabled={save.isPending} onClick={() => save.mutate()}>
+            Save companion
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function Field({
+  label,
+  value,
+  onChange,
+  type = "text",
+}: {
+  label: string;
+  value: string;
+  onChange: (e: { target: { value: string } }) => void;
+  type?: string;
+}) {
+  return (
+    <div>
+      <Label className="text-xs">{label}</Label>
+      <Input className="mt-1 h-9" type={type} value={value} onChange={onChange} />
+    </div>
+  );
+}
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -296,8 +507,20 @@ function Companions() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const fetchAccounts = useServerFn(listCompanionAccounts);
+  const { data: accounts } = useQuery({
+    queryKey: ["admin-companion-accounts"],
+    queryFn: () => fetchAccounts(),
+  });
+
   return (
     <Panel>
+      <AddCompanion />
+      <datalist id="companion-accounts">
+        {(accounts ?? []).map((a) => (
+          <option key={a.id} value={a.email} />
+        ))}
+      </datalist>
       {(data ?? []).map((c) => (
         <div key={c.id} className="space-y-3 border-b border-border pb-4 last:border-0">
           <div className="flex flex-wrap items-center gap-3">
@@ -305,6 +528,11 @@ function Companions() {
             <Badge variant={c.status === "approved" ? "default" : "secondary"}>{c.status}</Badge>
             <Badge variant={c.is_active ? "default" : "outline"}>
               {c.is_active ? "published" : "hidden"}
+            </Badge>
+            <Badge variant={c.user_id ? "default" : "outline"}>
+              {c.user_id
+                ? `linked: ${accounts?.find((a) => a.id === c.user_id)?.email ?? "account"}`
+                : "not linked"}
             </Badge>
             <div className="ml-auto flex gap-2">
               <Button
@@ -331,6 +559,7 @@ function Companions() {
               </Button>
             </div>
           </div>
+          <LinkAccount companionId={c.id} linked={!!c.user_id} />
           <div className="grid gap-3 sm:grid-cols-2">
             {(
               (c.companion_services ?? []) as {
