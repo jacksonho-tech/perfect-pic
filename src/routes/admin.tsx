@@ -14,7 +14,11 @@ import { useRoles, useSession } from "@/lib/auth";
 import { hkd, formatTime } from "@/lib/money";
 import { SERVICE_LABELS, type ServiceType } from "@/lib/types";
 import { useServerFn } from "@tanstack/react-start";
-import { linkCompanionToUser, listCompanionAccounts } from "@/lib/admin.functions";
+import {
+  generateCompanionCopy,
+  linkCompanionToUser,
+  listCompanionAccounts,
+} from "@/lib/admin.functions";
 import {
   Dialog,
   DialogContent,
@@ -93,6 +97,27 @@ function AddCompanion() {
   const set = (k: keyof typeof EMPTY_FORM) => (e: { target: { value: string } }) =>
     setF({ ...f, [k]: e.target.value });
   const isDj = f.service_type === "dj";
+
+  const generate = useServerFn(generateCompanionCopy);
+  const ai = useMutation({
+    mutationFn: () =>
+      generate({
+        data: {
+          displayName: f.display_name.trim(),
+          serviceType: f.service_type,
+          ageRange: f.age_range.trim() || undefined,
+          languages: splitList(f.languages),
+          tags: splitList(f.tags),
+          genres: splitList(f.genres),
+          areas: f.areas.trim() || undefined,
+        },
+      }),
+    onSuccess: (d) => {
+      setF((prev) => ({ ...prev, tagline: d.tagline, bio: d.bio }));
+      toast.success("Draft written — edit it before saving");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
 
   const save = useMutation({
     mutationFn: async () => {
