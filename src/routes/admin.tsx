@@ -198,6 +198,16 @@ function AddCompanion() {
             </select>
           </div>
           <Field label="Display name" value={f.display_name} onChange={set("display_name")} />
+          <Button
+            type="button"
+            size="sm"
+            variant="secondary"
+            className="w-full"
+            disabled={!f.display_name.trim() || ai.isPending}
+            onClick={() => ai.mutate()}
+          >
+            {ai.isPending ? "Writing..." : "Write tagline & bio with AI"}
+          </Button>
           <Field label="Tagline" value={f.tagline} onChange={set("tagline")} />
           <div>
             <Label className="text-xs">Bio</Label>
