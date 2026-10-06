@@ -146,6 +146,11 @@ function BookingsPage() {
                     {b.event_date} &middot; {formatTime(b.start_time)}–
                     {endTime(b.start_time, Number(b.duration_hours))} &middot; {b.venue_name}
                   </p>
+                  {b.status === "expired" && (
+                    <p className="mt-1 text-sm text-destructive">
+                      Expired: the companion didn't reply within 24 hours. No payment was taken.
+                    </p>
+                  )}
                   {b.decline_reason && (
                     <p className="mt-1 text-sm text-destructive">Reason: {b.decline_reason}</p>
                   )}
