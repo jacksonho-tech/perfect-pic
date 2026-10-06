@@ -17,6 +17,7 @@ import { useSession, useSettings } from "@/lib/auth";
 import { hkd, endTime } from "@/lib/money";
 import { depositFor, endsTooLate, priceFor } from "@/lib/pricing";
 import { SERVICE_LABELS, type Companion, type ServiceType } from "@/lib/types";
+import { formatSlot, overlapsBooked, sessionRange, useBookedSlots } from "@/lib/slots";
 
 export function BookingPanel({ companion }: { companion: Companion }) {
   const services = (companion.companion_services ?? []).filter((s) => s.is_active);
@@ -32,6 +33,7 @@ export function BookingPanel({ companion }: { companion: Companion }) {
   const { data: settings } = useSettings();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { data: booked = [] } = useBookedSlots(companion.id);
 
   const service = services.find((s) => s.service_type === serviceType);
   if (!service) {
@@ -83,7 +85,9 @@ export function BookingPanel({ companion }: { companion: Companion }) {
   });
 
   const dateInPast = date !== "" && new Date(date) < new Date(new Date().toDateString());
-  const canBook = date !== "" && !dateInPast && !tooLate;
+  const range = date ? sessionRange(date, startTime, price.hours) : null;
+  const taken = range ? overlapsBooked(booked, range.start, range.end) : false;
+  const canBook = date !== "" && !dateInPast && !tooLate && !taken;
 
   return (
     <div className="surface-panel glow-shadow space-y-5 p-6">
@@ -207,6 +211,21 @@ export function BookingPanel({ companion }: { companion: Companion }) {
         <p className="text-xs text-destructive">This session would finish after 5 AM.</p>
       )}
       {dateInPast && <p className="text-xs text-destructive">Choose a future date.</p>}
+      {taken && (
+        <p className="text-xs text-destructive">
+          This companion is already booked for part of that time. Please pick another night or time.
+        </p>
+      )}
+      {booked.length > 0 && (
+        <div className="rounded-lg border border-border bg-muted/40 p-3">
+          <p className="text-xs font-medium">Already booked</p>
+          <ul className="mt-1 space-y-0.5 text-[11px] text-muted-foreground line-through">
+            {booked.slice(0, 8).map((s) => (
+              <li key={s.starts_at}>{formatSlot(s)}</li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <Button
         className="w-full"
