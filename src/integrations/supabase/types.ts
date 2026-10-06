@@ -78,6 +78,7 @@ export type Database = {
           decline_reason: string | null
           deposit_amount: number
           duration_hours: number
+          ends_at: string | null
           event_date: string
           event_type: string | null
           extra_hours: number
@@ -88,6 +89,7 @@ export type Database = {
           party_mode: string | null
           service_type: Database["public"]["Enums"]["service_type"]
           start_time: string
+          starts_at: string | null
           status: Database["public"]["Enums"]["booking_status"]
           total_amount: number
           updated_at: string
@@ -102,6 +104,7 @@ export type Database = {
           decline_reason?: string | null
           deposit_amount?: number
           duration_hours?: number
+          ends_at?: string | null
           event_date: string
           event_type?: string | null
           extra_hours?: number
@@ -112,6 +115,7 @@ export type Database = {
           party_mode?: string | null
           service_type: Database["public"]["Enums"]["service_type"]
           start_time?: string
+          starts_at?: string | null
           status?: Database["public"]["Enums"]["booking_status"]
           total_amount?: number
           updated_at?: string
@@ -126,6 +130,7 @@ export type Database = {
           decline_reason?: string | null
           deposit_amount?: number
           duration_hours?: number
+          ends_at?: string | null
           event_date?: string
           event_type?: string | null
           extra_hours?: number
@@ -136,6 +141,7 @@ export type Database = {
           party_mode?: string | null
           service_type?: Database["public"]["Enums"]["service_type"]
           start_time?: string
+          starts_at?: string | null
           status?: Database["public"]["Enums"]["booking_status"]
           total_amount?: number
           updated_at?: string
@@ -595,6 +601,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      booking_compute_range: {
+        Args: { _date: string; _hours: number; _start: string }
+        Returns: unknown
+      }
+      get_booked_slots: {
+        Args: { _companion_id: string }
+        Returns: {
+          ends_at: string
+          starts_at: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
