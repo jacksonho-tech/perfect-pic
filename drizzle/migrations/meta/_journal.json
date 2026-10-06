@@ -15,6 +15,13 @@
       "when": 1789972415981,
       "tag": "0001_storage_policies",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791257977087,
+      "tag": "0002_booking_overlap_guard",
+      "breakpoints": true
     }
   ]
 }
