@@ -22,6 +22,13 @@
       "when": 1791257977087,
       "tag": "0002_booking_overlap_guard",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1791282754724,
+      "tag": "0003_expire_pending_bookings_cron",
+      "breakpoints": true
     }
   ]
 }
