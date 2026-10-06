@@ -159,7 +159,10 @@ function Requests({ companionId }: { companionId: string }) {
               {b.notes && <p className="mt-1 text-sm text-muted-foreground">Notes: {b.notes}</p>}
             </div>
             <div className="text-right">
-              <Badge variant="secondary">{b.status}</Badge>
+              <Badge variant={b.status === "expired" || b.status === "declined" || b.status === "cancelled" ? "destructive" : "secondary"}>{b.status}</Badge>
+              {b.status === "expired" && (
+                <p className="mt-1 text-xs text-muted-foreground">No reply within 24 hours</p>
+              )}
               <p className="mt-2 font-semibold text-primary">{hkd(Number(b.total_amount))}</p>
             </div>
           </div>
