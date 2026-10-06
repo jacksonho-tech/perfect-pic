@@ -11,8 +11,10 @@
 - Companion dashboard (requests, profile, photos, availability, AI bio draft)
 - Owner dashboard (bookings, ID queue, companions + pricing, photo queue, review queue, reports, site settings)
 
+- 24h auto-expiry of pending requests (15-min scheduled job)
+
 ## Open (needs user action)
 - Stripe deposit checkout + webhook (needs Stripe setup / legal + restricted-business check)
 - Transactional emails (request received/accepted/declined, reminders, review requests)
-- 24h auto-expiry of pending requests (scheduled job)
+
 - Overlap check so a companion can't be double-booked on the same night
