@@ -14,7 +14,7 @@
 - 24h auto-expiry of pending requests (15-min scheduled job)
 
 ## Open (needs user action)
-- Stripe deposit checkout + webhook (needs Stripe setup / legal + restricted-business check)
+- Stripe deposit checkout + webhook (built; waiting for Stripe test keys)
 - Transactional emails (request received/accepted/declined, reminders, review requests)
 
 - Overlap check so a companion can't be double-booked on the same night

@@ -364,8 +364,13 @@ export type Database = {
           created_at: string
           currency: string
           id: string
+          payment_intent_id: string | null
           provider_session_id: string | null
+          refund_note: string | null
+          refunded_amount: number
+          refunded_at: string | null
           status: string
+          updated_at: string
         }
         Insert: {
           amount: number
@@ -373,8 +378,13 @@ export type Database = {
           created_at?: string
           currency?: string
           id?: string
+          payment_intent_id?: string | null
           provider_session_id?: string | null
+          refund_note?: string | null
+          refunded_amount?: number
+          refunded_at?: string | null
           status?: string
+          updated_at?: string
         }
         Update: {
           amount?: number
@@ -382,8 +392,13 @@ export type Database = {
           created_at?: string
           currency?: string
           id?: string
+          payment_intent_id?: string | null
           provider_session_id?: string | null
+          refund_note?: string | null
+          refunded_amount?: number
+          refunded_at?: string | null
           status?: string
+          updated_at?: string
         }
         Relationships: [
           {
@@ -575,6 +590,24 @@ export type Database = {
           key?: string
           updated_at?: string
           value?: string
+        }
+        Relationships: []
+      }
+      stripe_events: {
+        Row: {
+          created_at: string
+          id: string
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          type: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          type?: string
         }
         Relationships: []
       }

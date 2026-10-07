@@ -29,6 +29,13 @@
       "when": 1791282754724,
       "tag": "0003_expire_pending_bookings_cron",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791336482171,
+      "tag": "0004_stripe_deposits",
+      "breakpoints": true
     }
   ]
 }
