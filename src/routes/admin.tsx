@@ -14,6 +14,7 @@ import { useRoles, useSession } from "@/lib/auth";
 import { hkd, formatTime } from "@/lib/money";
 import { SERVICE_LABELS, type ServiceType } from "@/lib/types";
 import { useServerFn } from "@tanstack/react-start";
+import { recordRefund } from "@/lib/payments.functions";
 import {
   generateCompanionCopy,
   linkCompanionToUser,
@@ -304,6 +305,7 @@ function AdminPage() {
       <Tabs defaultValue="bookings" className="mt-8">
         <TabsList className="flex-wrap">
           <TabsTrigger value="bookings">Bookings</TabsTrigger>
+          <TabsTrigger value="payments">Payments</TabsTrigger>
           <TabsTrigger value="ids">ID queue</TabsTrigger>
           <TabsTrigger value="companions">Companions</TabsTrigger>
           <TabsTrigger value="photos">Photos</TabsTrigger>
@@ -313,6 +315,9 @@ function AdminPage() {
         </TabsList>
         <TabsContent value="bookings">
           <Bookings />
+        </TabsContent>
+        <TabsContent value="payments">
+          <Payments />
         </TabsContent>
         <TabsContent value="ids">
           <IdQueue />
@@ -339,6 +344,101 @@ function AdminPage() {
 
 function Panel({ children }: { children: React.ReactNode }) {
   return <div className="surface-panel mt-6 space-y-4 p-6">{children}</div>;
+}
+
+function Payments() {
+  const queryClient = useQueryClient();
+  const refundFn = useServerFn(recordRefund);
+  const [amount, setAmount] = useState<Record<string, string>>({});
+  const [note, setNote] = useState<Record<string, string>>({});
+  const { data = [] } = useQuery({
+    queryKey: ["admin-payments"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("payments")
+        .select("*, booking_requests(event_date, venue_name, companions(display_name))")
+        .order("created_at", { ascending: false })
+        .limit(200);
+      if (error) throw error;
+      return data as unknown as Array<{
+        id: string;
+        amount: number;
+        status: string;
+        refunded_amount: number;
+        refund_note: string | null;
+        created_at: string;
+        booking_requests: {
+          event_date: string;
+          venue_name: string;
+          companions: { display_name: string } | null;
+        } | null;
+      }>;
+    },
+  });
+  const refund = useMutation({
+    mutationFn: (p: { paymentId: string; amount: number; note: string }) => refundFn({ data: p }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-payments"] });
+      toast.success("Refund recorded");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+  return (
+    <Panel>
+      <p className="text-xs text-muted-foreground">
+        Refunds are manual: refund the customer in Stripe first, then record it here.
+      </p>
+      {data.length === 0 && <p className="text-sm text-muted-foreground">No payments yet.</p>}
+      {data.map((p) => (
+        <div key={p.id} className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
+          <div className="text-sm">
+            <p className="font-medium">
+              {p.booking_requests?.companions?.display_name} &middot; {p.booking_requests?.event_date}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {hkd(Number(p.amount))} deposit &middot; {new Date(p.created_at).toLocaleString()}
+              {Number(p.refunded_amount) > 0 && ` · refunded ${hkd(Number(p.refunded_amount))}`}
+              {p.refund_note && ` · ${p.refund_note}`}
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Badge variant={p.status === "paid" ? "default" : "secondary"}>{p.status}</Badge>
+            {p.status === "paid" && (
+              <>
+                <Input
+                  className="h-8 w-24"
+                  type="number"
+                  placeholder="Amount"
+                  value={amount[p.id] ?? String(p.amount)}
+                  onChange={(e) => setAmount({ ...amount, [p.id]: e.target.value })}
+                />
+                <Input
+                  className="h-8 w-40"
+                  placeholder="Note"
+                  value={note[p.id] ?? ""}
+                  onChange={(e) => setNote({ ...note, [p.id]: e.target.value })}
+                />
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={refund.isPending}
+                  onClick={() =>
+                    refund.mutate({
+                      paymentId: p.id,
+                      amount: Number(amount[p.id] ?? p.amount),
+                      note: note[p.id] ?? "",
+                    })
+                  }
+                >
+                  Record refund
+                </Button>
+              </>
+            )}
+          </div>
+        </div>
+      ))}
+    </Panel>
+  );
 }
 
 function Bookings() {
