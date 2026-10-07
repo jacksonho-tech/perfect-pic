@@ -18,6 +18,8 @@ import { useSession, useSettings } from "@/lib/auth";
 import { hkd, formatTime, endTime } from "@/lib/money";
 import { SERVICE_LABELS, type BookingStatus, type ServiceType } from "@/lib/types";
 import { ReportDialog } from "@/components/site/ReportDialog";
+import { useServerFn } from "@tanstack/react-start";
+import { createDepositCheckout } from "@/lib/payments.functions";
 
 export const Route = createFileRoute("/bookings")({
   head: () => ({
@@ -87,6 +89,15 @@ function BookingsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["bookings"] });
       toast.success("Booking cancelled");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const checkout = useServerFn(createDepositCheckout);
+  const pay = useMutation({
+    mutationFn: async (id: string) => {
+      const { url } = await checkout({ data: { bookingId: id } });
+      window.location.href = url;
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -168,8 +179,12 @@ function BookingsPage() {
 
               <div className="mt-4 flex flex-wrap gap-2">
                 {b.status === "accepted" && (
-                  <Button size="sm" disabled title="Card payments open soon">
-                    Pay deposit
+                  <Button
+                    size="sm"
+                    onClick={() => pay.mutate(b.id)}
+                    disabled={pay.isPending}
+                  >
+                    {pay.isPending && pay.variables === b.id ? "Opening checkout..." : "Pay deposit"}
                   </Button>
                 )}
                 {(b.status === "pending" || b.status === "accepted" || b.status === "paid") && (

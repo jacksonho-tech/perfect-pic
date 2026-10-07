@@ -24,7 +24,10 @@ import { Route as SafetyRouteImport } from './routes/safety'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as CompanionsIndexRouteImport } from './routes/companions.index'
 import { Route as CompanionsIdRouteImport } from './routes/companions.$id'
+import { Route as PaymentCancelRouteImport } from './routes/payment.cancel'
+import { Route as PaymentSuccessRouteImport } from './routes/payment.success'
 import { Route as ApiPublicGenerateBioRouteImport } from './routes/api/public/generate-bio'
+import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe-webhook'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -101,9 +104,24 @@ const CompanionsIdRoute = CompanionsIdRouteImport.update({
   path: '/companions/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PaymentCancelRoute = PaymentCancelRouteImport.update({
+  id: '/payment/cancel',
+  path: '/payment/cancel',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentSuccessRoute = PaymentSuccessRouteImport.update({
+  id: '/payment/success',
+  path: '/payment/success',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicGenerateBioRoute = ApiPublicGenerateBioRouteImport.update({
   id: '/api/public/generate-bio',
   path: '/api/public/generate-bio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
+  id: '/api/public/stripe-webhook',
+  path: '/api/public/stripe-webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -122,8 +140,11 @@ export interface FileRoutesByFullPath {
   '/safety': typeof SafetyRoute
   '/terms': typeof TermsRoute
   '/companions/$id': typeof CompanionsIdRoute
+  '/payment/cancel': typeof PaymentCancelRoute
+  '/payment/success': typeof PaymentSuccessRoute
   '/companions/': typeof CompanionsIndexRoute
   '/api/public/generate-bio': typeof ApiPublicGenerateBioRoute
+  '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -140,8 +161,11 @@ export interface FileRoutesByTo {
   '/safety': typeof SafetyRoute
   '/terms': typeof TermsRoute
   '/companions/$id': typeof CompanionsIdRoute
+  '/payment/cancel': typeof PaymentCancelRoute
+  '/payment/success': typeof PaymentSuccessRoute
   '/companions': typeof CompanionsIndexRoute
   '/api/public/generate-bio': typeof ApiPublicGenerateBioRoute
+  '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -159,8 +183,11 @@ export interface FileRoutesById {
   '/safety': typeof SafetyRoute
   '/terms': typeof TermsRoute
   '/companions/$id': typeof CompanionsIdRoute
+  '/payment/cancel': typeof PaymentCancelRoute
+  '/payment/success': typeof PaymentSuccessRoute
   '/companions/': typeof CompanionsIndexRoute
   '/api/public/generate-bio': typeof ApiPublicGenerateBioRoute
+  '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -179,8 +206,11 @@ export interface FileRouteTypes {
     | '/safety'
     | '/terms'
     | '/companions/$id'
+    | '/payment/cancel'
+    | '/payment/success'
     | '/companions/'
     | '/api/public/generate-bio'
+    | '/api/public/stripe-webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -197,8 +227,11 @@ export interface FileRouteTypes {
     | '/safety'
     | '/terms'
     | '/companions/$id'
+    | '/payment/cancel'
+    | '/payment/success'
     | '/companions'
     | '/api/public/generate-bio'
+    | '/api/public/stripe-webhook'
   id:
     | '__root__'
     | '/'
@@ -215,8 +248,11 @@ export interface FileRouteTypes {
     | '/safety'
     | '/terms'
     | '/companions/$id'
+    | '/payment/cancel'
+    | '/payment/success'
     | '/companions/'
     | '/api/public/generate-bio'
+    | '/api/public/stripe-webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -234,8 +270,11 @@ export interface RootRouteChildren {
   SafetyRoute: typeof SafetyRoute
   TermsRoute: typeof TermsRoute
   CompanionsIdRoute: typeof CompanionsIdRoute
+  PaymentCancelRoute: typeof PaymentCancelRoute
+  PaymentSuccessRoute: typeof PaymentSuccessRoute
   CompanionsIndexRoute: typeof CompanionsIndexRoute
   ApiPublicGenerateBioRoute: typeof ApiPublicGenerateBioRoute
+  ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -345,11 +384,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CompanionsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/payment/cancel': {
+      id: '/payment/cancel'
+      path: '/payment/cancel'
+      fullPath: '/payment/cancel'
+      preLoaderRoute: typeof PaymentCancelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payment/success': {
+      id: '/payment/success'
+      path: '/payment/success'
+      fullPath: '/payment/success'
+      preLoaderRoute: typeof PaymentSuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/generate-bio': {
       id: '/api/public/generate-bio'
       path: '/api/public/generate-bio'
       fullPath: '/api/public/generate-bio'
       preLoaderRoute: typeof ApiPublicGenerateBioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/stripe-webhook': {
+      id: '/api/public/stripe-webhook'
+      path: '/api/public/stripe-webhook'
+      fullPath: '/api/public/stripe-webhook'
+      preLoaderRoute: typeof ApiPublicStripeWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -370,8 +430,11 @@ const rootRouteChildren: RootRouteChildren = {
   SafetyRoute: SafetyRoute,
   TermsRoute: TermsRoute,
   CompanionsIdRoute: CompanionsIdRoute,
+  PaymentCancelRoute: PaymentCancelRoute,
+  PaymentSuccessRoute: PaymentSuccessRoute,
   CompanionsIndexRoute: CompanionsIndexRoute,
   ApiPublicGenerateBioRoute: ApiPublicGenerateBioRoute,
+  ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
